@@ -1,0 +1,29 @@
+create database bdtTest39;
+Use bdtTest39;
+
+create table customer(cust_id INT,firstname STRING,lastname STRING,age INT,profession STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY','STORED AS textfile;
+describe customer;
+
+LOAD DATA LOCAL INPATH 'custs.txt' OVERWRITE INTO TABLE customer;
+
+
+CREATE TABLE records(txnno INT,txndate STRING,custno INT, amount DOUBLE,category STRING, product STRING, city STRING, state STRING ,spendby STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY','STORED AS textfile LOCATION '/user/bigcdac432555/dbtTest39';
+
+LOAD DATA LOCAL INPATH 'txns1.txt' OVERWRITE INTO TABLE records;
+
+
+Q 2.1 )
+select profession,count(cust_id) from customer group by profession;
+
+
+Q 2.2 )
+select  custno,round(sum(amount)) as total from records group by custno order by total desc limit 10;
+
+
+Q 2.3 )
+
+create table recordsbypart (txnno INT,txndata STRING,custno INT, amout DOUBLE, product STRING, city STRING, state STRING ,spendby STRING) partitioned by (category
+STRING) ROW FORMAT DELIMITED FIELDS TERMINATED by ',' stored as textfile;
+
+Insert OVERWRITE TABLE recordsbypart PARTITION(categeory) SELECT txnno,txndate,cusno,amount,product,city,state,spendby,category from records txn DISTR
+IBUTE BY category;

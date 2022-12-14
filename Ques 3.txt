@@ -1,0 +1,16 @@
+from pyspark.context import SparkContext
+from pyspark.sql.session import SparkSession
+sc = SparkContext("local")
+spark= SparkSession(sc)
+from pyspark.sql.types import StructType, StringType,IntegerType,DoubleType,LongType
+
+
+m=sc.textFile("hdfs://nameservice1/user/bigcdac432555/bdtTest39")
+m.take(20)
+v=m.first()
+print(v)
+
+vp=m.filter(lambda x : x!=v)
+vp.take(10)
+vnp=vp.map(lambda x: x.split(",")).map(lambda x :(x[0],x[3])).reduce(lambda x,y : x if x>y else y) 
+print(vnp)
